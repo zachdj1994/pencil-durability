@@ -1,0 +1,24 @@
+{
+  "name": "zach-jones-pencil-durability",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zachdj1994/zach-jones-pencil-durability.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zachdj1994/zach-jones-pencil-durability/issues"
+  },
+  "homepage": "https://github.com/zachdj1994/zach-jones-pencil-durability#readme",
+  "dependencies": {
+    "jasmine": "^3.5.0",
+    "minimist": "^1.2.5"
+  }
+}
