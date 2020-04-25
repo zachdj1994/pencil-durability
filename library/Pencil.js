@@ -8,8 +8,8 @@ class Pencil {
         this.fileHandler = new FileHandler(this.fileLocation);
     }
 
-    write() {
-
+    write(text) {
+        this.fileHandler.writeToFile(text);
     }
 }
 module.exports = Pencil;
