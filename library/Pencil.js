@@ -9,7 +9,7 @@ class Pencil {
     }
 
     write(text) {
-        this.fileHandler.writeToFile(text);
+        this.fileHandler.appendToFile(text);
     }
 }
 module.exports = Pencil;

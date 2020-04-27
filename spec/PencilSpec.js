@@ -11,7 +11,7 @@ describe("Pencil", function () {
     describe("write", function () {
         it("should pass the text to the FileHandler to write", function () {
             let pencil = new Pencil();
-            let spy = spyOn(pencil.fileHandler, "writeToFile");
+            let spy = spyOn(pencil.fileHandler, "appendToFile");
             let text = "test data";
             pencil.write(text);
             expect(spy).toHaveBeenCalledWith(text);

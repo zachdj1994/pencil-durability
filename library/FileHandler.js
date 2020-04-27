@@ -10,7 +10,7 @@ class FileHandler {
         this.fileLocation = fileLocation;
     }
 
-    writeToFile(textToWrite) {
+    appendToFile(textToWrite) {
         fs.appendFile(this.fileLocation, textToWrite, this.callback);
     }
 }
