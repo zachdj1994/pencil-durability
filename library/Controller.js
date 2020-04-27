@@ -16,7 +16,7 @@ class Controller {
 
         switch (command) {
             case "write":
-                this.pencil.write(args);
+                this.pencil.write(args._[1]);
         }
     }
 }

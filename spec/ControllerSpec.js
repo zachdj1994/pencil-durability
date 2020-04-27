@@ -36,15 +36,15 @@ describe("Controller", function () {
             expect(pencilSpy).not.toHaveBeenCalled();
         });
 
-        it("should pass the arguments to the write method", function () {
+        it("should pass the text to the write method", function () {
             let controller = new Controller;
             let pencilSpy = spyOn(controller.pencil, "write");
             let minimistSpy = spyOn(controller.minimist, "getArguments")
                 .and
-                .returnValue(Object({ _: ["write"] }));
+                .returnValue(Object({ _: ["write", "text"] }));
             controller.run();
 
-            expect(pencilSpy).toHaveBeenCalledWith(Object({ _: ["write"] }));
+            expect(pencilSpy).toHaveBeenCalledWith("text");
         });
     });
 });
