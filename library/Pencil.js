@@ -1,7 +1,7 @@
 const FileHandler = require("./../library/FileHandler");
 
 class Pencil {
-    fileLocation = "paper.txt";
+    fileLocation = "data/paper.txt";
     fileHandler;
 
     constructor() {
