@@ -8,6 +8,11 @@ describe("Pencil", function () {
         expect(pencil.fileHandler.fileLocation).toEqual(pencil.fileLocation)
     });
 
+    it("should set the durability", function () {
+        let pencil = new Pencil(1000);
+        expect(pencil.durability).toEqual(1000);
+    });
+
     describe("write", function () {
         it("should pass the text to the FileHandler to write", function () {
             let pencil = new Pencil();

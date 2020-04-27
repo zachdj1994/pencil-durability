@@ -3,9 +3,11 @@ const FileHandler = require("./../library/FileHandler");
 class Pencil {
     fileLocation = "data/paper.txt";
     fileHandler;
+    durability;
 
-    constructor() {
+    constructor(durability) {
         this.fileHandler = new FileHandler(this.fileLocation);
+        this.durability = durability;
     }
 
     write(text) {
