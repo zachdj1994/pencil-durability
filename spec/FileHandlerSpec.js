@@ -8,7 +8,7 @@ describe("FileHandler", function () {
             let handler = new FileHandler(fileLocation);
             let spy = spyOn(fs, "appendFile");
             handler.writeToFile('test data');
-            expect(spy).toHaveBeenCalledWith(fileLocation, 'test data');
+            expect(spy).toHaveBeenCalledWith(fileLocation, 'test data', handler.callback);
         });
     })
 });
