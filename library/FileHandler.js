@@ -13,5 +13,9 @@ class FileHandler {
     appendToFile(textToWrite) {
         fs.appendFile(this.fileLocation, textToWrite, this.callback);
     }
+
+    writeToFile(textToWrite) {
+        fs.writeFile(this.fileLocation, textToWrite, this.callback);
+    }
 }
 module.exports = FileHandler;
