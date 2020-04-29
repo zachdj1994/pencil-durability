@@ -1,11 +1,20 @@
 const Pencil = require("./../library/Pencil");
 const FileHandler = require("./../library/FileHandler");
+let paperHandlerSpy;
+let pencilHandlerSpy;
+let pencil;
 
 describe("Pencil", function () {
-    it("should initialize the FileHandler", function () {
+    it("should initialize the paper FileHandler", function () {
         let pencil = new Pencil();
-        expect(pencil.fileHandler).toBeInstanceOf(FileHandler);
-        expect(pencil.fileHandler.fileLocation).toEqual(pencil.fileLocation)
+        expect(pencil.paperFileHandler).toBeInstanceOf(FileHandler);
+        expect(pencil.paperFileHandler.fileLocation).toEqual(pencil.paperFileLocation)
+    });
+
+    it("should initialize the pencil FileHandler", function () {
+        let pencil = new Pencil();
+        expect(pencil.pencilFileHandler).toBeInstanceOf(FileHandler);
+        expect(pencil.pencilFileHandler.fileLocation).toEqual(pencil.pencilFileLocation)
     });
 
     it("should set the durability", function () {
@@ -14,17 +23,21 @@ describe("Pencil", function () {
     });
 
     describe("write", function () {
+        beforeEach(function() {
+            pencil = new Pencil();
+            paperHandlerSpy = spyOn(pencil.paperFileHandler, "appendToFile");
+            pencilHandlerSpy = spyOn(pencil.pencilFileHandler, "writeToFile");
+        });
+
         it("should pass the text to the FileHandler to write", function () {
-            let pencil = new Pencil();
-            let spy = spyOn(pencil.fileHandler, "appendToFile");
             let text = "test data";
+
             pencil.write(text);
-            expect(spy).toHaveBeenCalledWith(text);
+            expect(paperHandlerSpy).toHaveBeenCalledWith(text);
         });
 
         it("should determine which text can be written if the durability is defined", function () {
-            let pencil = new Pencil(8);
-            let fileHandlerSpy = spyOn(pencil.fileHandler, "appendToFile");
+            pencil.durability = 8;
             let writableTextSpy = spyOn(pencil, "getWritableText");
 
             pencil.write("test data");
@@ -32,19 +45,29 @@ describe("Pencil", function () {
         });
 
         it("should not determine which text can be written if the durability is not defined", function () {
-            let pencil = new Pencil();
-            let fileHandlerSpy = spyOn(pencil.fileHandler, "appendToFile");
             let writableTextSpy = spyOn(pencil, "getWritableText");
 
             pencil.write("test data");
             expect(writableTextSpy).not.toHaveBeenCalled();
         });
+
+        it("should write the pencil's current state to temporary storage", function () {
+            pencil.durability = 10;
+
+            pencil.write("test data");
+            expect(pencilHandlerSpy).toHaveBeenCalledWith("durability: 2");
+        });
     });
 
     describe("getWritableText", function () {
+        beforeEach(function() {
+            pencil = new Pencil();
+            paperHandlerSpy = spyOn(pencil.paperFileHandler, "appendToFile");
+            pencilHandlerSpy = spyOn(pencil.pencilFileHandler, "appendToFile");
+        });
+
         it("should degrade the pencil for each character", function () {
-            let pencil = new Pencil(8);
-            let fileHandlerSpy = spyOn(pencil.fileHandler, "appendToFile");
+            pencil.durability = 8;
             let degradePencilSpy = spyOn(pencil, "degradePencil");
 
             pencil.getWritableText("test data");
@@ -52,15 +75,13 @@ describe("Pencil", function () {
         });
 
         it("should return the text it was passed if the pencil does not degrade", function () {
-            let pencil = new Pencil(8);
-            let fileHandlerSpy = spyOn(pencil.fileHandler, "appendToFile");
+            pencil.durability = 8;
 
             expect(pencil.getWritableText("test data")).toEqual("test data");
         });
 
         it("should blank the correct number of characters when the pencil degrades", function () {
-            let pencil = new Pencil(8);
-            let fileHandlerSpy = spyOn(pencil.fileHandler, "appendToFile");
+            pencil.durability = 8;
 
             expect(pencil.getWritableText("test data more")).toEqual("test data     ");
         });

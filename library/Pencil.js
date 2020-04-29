@@ -1,12 +1,15 @@
 const FileHandler = require("./../library/FileHandler");
 
 class Pencil {
-    fileLocation = "data/paper.txt";
-    fileHandler;
+    paperFileLocation = "data/paper.txt";
+    pencilFileLocation = "data/pencil.txt";
+    paperFileHandler;
+    pencilFileHandler;
     durability;
 
     constructor(durability) {
-        this.fileHandler = new FileHandler(this.fileLocation);
+        this.paperFileHandler = new FileHandler(this.paperFileLocation);
+        this.pencilFileHandler = new FileHandler(this.pencilFileLocation);
         this.durability = durability;
     }
 
@@ -15,7 +18,8 @@ class Pencil {
             text = this.getWritableText(text)
         }
 
-        this.fileHandler.appendToFile(text);
+        this.paperFileHandler.appendToFile(text);
+        this.pencilFileHandler.writeToFile("durability: " + this.durability);
     }
 
     getWritableText(initialText) {
