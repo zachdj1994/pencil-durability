@@ -22,4 +22,18 @@ describe("Pencil", function () {
             expect(spy).toHaveBeenCalledWith(text);
         });
     });
+
+    describe("isSpace", function () {
+        it("should return true if the character is a space", function () {
+            let pencil = new Pencil();
+            expect(pencil.isSpace(" ")).toBeTrue();
+        });
+
+        it("should return false if the character is not a space", function () {
+            let pencil = new Pencil();
+            expect(pencil.isSpace("n")).toBeFalse();
+            expect(pencil.isSpace("1")).toBeFalse();
+            expect(pencil.isSpace("$")).toBeFalse();
+        })
+    });
 });

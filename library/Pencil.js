@@ -13,5 +13,9 @@ class Pencil {
     write(text) {
         this.fileHandler.appendToFile(text);
     }
+
+    isSpace(character) {
+        return character.trim() === '';
+    }
 }
 module.exports = Pencil;
