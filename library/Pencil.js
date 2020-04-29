@@ -21,5 +21,9 @@ class Pencil {
     isNumber(character) {
         return !isNaN(parseInt(character));
     }
+
+    isSpecialCharacter(character) {
+        return /[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/g.test(character);
+    }
 }
 module.exports = Pencil;

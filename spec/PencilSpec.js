@@ -52,4 +52,20 @@ describe("Pencil", function () {
             expect(pencil.isNumber("$")).toBeFalse();
         })
     });
+
+    describe("isSpecialCharacter", function () {
+        it("should return true if the character is a special character", function () {
+            let pencil = new Pencil();
+            expect(pencil.isSpecialCharacter("$")).toBeTrue();
+            expect(pencil.isSpecialCharacter("%")).toBeTrue();
+            expect(pencil.isSpecialCharacter("`")).toBeTrue();
+        });
+
+        it("should return false if the character is not a special character", function () {
+            let pencil = new Pencil();
+            expect(pencil.isSpecialCharacter("n")).toBeFalse();
+            expect(pencil.isSpecialCharacter(" ")).toBeFalse();
+            expect(pencil.isSpecialCharacter("3")).toBeFalse();
+        })
+    });
 });
