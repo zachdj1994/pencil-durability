@@ -100,4 +100,41 @@ describe("Pencil", function () {
             expect(pencil.isUpperCase("i")).toBeFalse();
         })
     });
+
+    describe("degradePencil", function () {
+        it("should not degrade the pencil when writing a space", function () {
+            let pencil = new Pencil(2);
+            let spy = spyOn(pencil, "isSpace").and.returnValue(true);
+            pencil.degradePencil(" ");
+            expect(pencil.durability).toEqual(2);
+        });
+
+        it("should degrade the pencil by 1 point when writing a numeral", function () {
+            let pencil = new Pencil(2)
+            let spy = spyOn(pencil, "isNumber").and.returnValue(true);
+            pencil.degradePencil("1");
+            expect(pencil.durability).toEqual(1);
+        });
+
+        it("should degrade the pencil by 1 point when writing a special character", function () {
+            let pencil = new Pencil(2)
+            let spy = spyOn(pencil, "isSpecialCharacter").and.returnValue(true);
+            pencil.degradePencil("%");
+            expect(pencil.durability).toEqual(1);
+        });
+
+        it("should degrade the pencil by 1 point when writing a lowercase letter", function () {
+            let pencil = new Pencil(2)
+            let spy = spyOn(pencil, "isLowerCase").and.returnValue(true);
+            pencil.degradePencil("a");
+            expect(pencil.durability).toEqual(1);
+        });
+
+        it("should degrade the pencil by 2 points when writing an uppercase letter", function () {
+            let pencil = new Pencil(2)
+            let spy = spyOn(pencil, "isUpperCase").and.returnValue(true);
+            pencil.degradePencil("A");
+            expect(pencil.durability).toEqual(0);
+        });
+    });
 });

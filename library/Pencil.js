@@ -14,6 +14,20 @@ class Pencil {
         this.fileHandler.appendToFile(text);
     }
 
+    degradePencil(character) {
+        if(this.isSpace(character)) {
+            this.durability -= 0;
+        } else if (
+            this.isNumber(character) ||
+            this.isSpecialCharacter(character) ||
+            this.isLowerCase(character)
+        ) {
+            this.durability--;
+        } else if (this.isUpperCase(character)) {
+            this.durability -= 2;
+        }
+    }
+
     isSpace(character) {
         return character.trim() === '';
     }
