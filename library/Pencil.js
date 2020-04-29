@@ -25,5 +25,9 @@ class Pencil {
     isSpecialCharacter(character) {
         return /[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/g.test(character);
     }
+
+    isLowerCase(character) {
+        return character == character.toLowerCase()
+    }
 }
 module.exports = Pencil;

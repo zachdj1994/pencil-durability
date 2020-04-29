@@ -68,4 +68,20 @@ describe("Pencil", function () {
             expect(pencil.isSpecialCharacter("3")).toBeFalse();
         })
     });
+
+    describe("isLowerCase", function () {
+        it("should return true if the character is lower case", function () {
+            let pencil = new Pencil();
+            expect(pencil.isLowerCase("a")).toBeTrue();
+            expect(pencil.isLowerCase("p")).toBeTrue();
+            expect(pencil.isLowerCase("i")).toBeTrue();
+        });
+
+        it("should return false if the character is not lower case", function () {
+            let pencil = new Pencil();
+            expect(pencil.isLowerCase("A")).toBeFalse();
+            expect(pencil.isLowerCase("P")).toBeFalse();
+            expect(pencil.isLowerCase("I")).toBeFalse();
+        })
+    });
 });
