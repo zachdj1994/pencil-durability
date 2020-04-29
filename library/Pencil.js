@@ -29,5 +29,9 @@ class Pencil {
     isLowerCase(character) {
         return character == character.toLowerCase()
     }
+
+    isUpperCase(character) {
+        return character == character.toUpperCase();
+    }
 }
 module.exports = Pencil;
