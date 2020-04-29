@@ -22,13 +22,47 @@ describe("Pencil", function () {
             expect(spy).toHaveBeenCalledWith(text);
         });
 
-        it("should degrade the pencil for each character", function () {
+        it("should determine which text can be written if the durability is defined", function () {
+            let pencil = new Pencil(8);
+            let fileHandlerSpy = spyOn(pencil.fileHandler, "appendToFile");
+            let writableTextSpy = spyOn(pencil, "getWritableText");
+
+            pencil.write("test data");
+            expect(writableTextSpy).toHaveBeenCalled();
+        });
+
+        it("should not determine which text can be written if the durability is not defined", function () {
             let pencil = new Pencil();
+            let fileHandlerSpy = spyOn(pencil.fileHandler, "appendToFile");
+            let writableTextSpy = spyOn(pencil, "getWritableText");
+
+            pencil.write("test data");
+            expect(writableTextSpy).not.toHaveBeenCalled();
+        });
+    });
+
+    describe("getWritableText", function () {
+        it("should degrade the pencil for each character", function () {
+            let pencil = new Pencil(8);
             let fileHandlerSpy = spyOn(pencil.fileHandler, "appendToFile");
             let degradePencilSpy = spyOn(pencil, "degradePencil");
 
-            pencil.write("test data");
+            pencil.getWritableText("test data");
             expect(degradePencilSpy).toHaveBeenCalledTimes(9);
+        });
+
+        it("should return the text it was passed if the pencil does not degrade", function () {
+            let pencil = new Pencil(8);
+            let fileHandlerSpy = spyOn(pencil.fileHandler, "appendToFile");
+
+            expect(pencil.getWritableText("test data")).toEqual("test data");
+        });
+
+        it("should blank the correct number of characters when the pencil degrades", function () {
+            let pencil = new Pencil(8);
+            let fileHandlerSpy = spyOn(pencil.fileHandler, "appendToFile");
+
+            expect(pencil.getWritableText("test data more")).toEqual("test data     ");
         });
     });
 

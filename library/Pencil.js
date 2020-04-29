@@ -11,10 +11,25 @@ class Pencil {
     }
 
     write(text) {
-        for (let i = 0; i < text.length; i++) {
-            this.degradePencil(text.charAt(i));
+        if (this.durability != undefined) {
+            text = this.getWritableText(text)
         }
+
         this.fileHandler.appendToFile(text);
+    }
+
+    getWritableText(initialText) {
+        let writableText = "";
+        for (let i = 0; i < initialText.length; i++) {
+            if (this.durability > 0) {
+                writableText += initialText.charAt(i);
+            } else {
+                writableText += " ";
+            }
+            this.degradePencil(initialText.charAt(i));
+        }
+
+        return writableText;
     }
 
     degradePencil(character) {
