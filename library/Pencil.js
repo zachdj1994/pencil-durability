@@ -17,5 +17,9 @@ class Pencil {
     isSpace(character) {
         return character.trim() === '';
     }
+
+    isNumber(character) {
+        return !isNaN(parseInt(character));
+    }
 }
 module.exports = Pencil;

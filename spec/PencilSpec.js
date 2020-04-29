@@ -36,4 +36,20 @@ describe("Pencil", function () {
             expect(pencil.isSpace("$")).toBeFalse();
         })
     });
+
+    describe("isNumber", function () {
+        it("should return true if the character is a number", function () {
+            let pencil = new Pencil();
+            expect(pencil.isNumber("1")).toBeTrue();
+            expect(pencil.isNumber("2")).toBeTrue();
+            expect(pencil.isNumber("3")).toBeTrue();
+        });
+
+        it("should return false if the character is not a number", function () {
+            let pencil = new Pencil();
+            expect(pencil.isNumber("n")).toBeFalse();
+            expect(pencil.isNumber(" ")).toBeFalse();
+            expect(pencil.isNumber("$")).toBeFalse();
+        })
+    });
 });
