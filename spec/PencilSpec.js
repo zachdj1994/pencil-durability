@@ -21,6 +21,15 @@ describe("Pencil", function () {
             pencil.write(text);
             expect(spy).toHaveBeenCalledWith(text);
         });
+
+        it("should degrade the pencil for each character", function () {
+            let pencil = new Pencil();
+            let fileHandlerSpy = spyOn(pencil.fileHandler, "appendToFile");
+            let degradePencilSpy = spyOn(pencil, "degradePencil");
+
+            pencil.write("test data");
+            expect(degradePencilSpy).toHaveBeenCalledTimes(9);
+        });
     });
 
     describe("isSpace", function () {

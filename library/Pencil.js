@@ -11,6 +11,9 @@ class Pencil {
     }
 
     write(text) {
+        for (let i = 0; i < text.length; i++) {
+            this.degradePencil(text.charAt(i));
+        }
         this.fileHandler.appendToFile(text);
     }
 
