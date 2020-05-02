@@ -7,7 +7,7 @@ class Controller {
 
     constructor() {
         this.minimist = new MinimistWrapper;
-        this.pencil = new Pencil();
+        this.pencil = new Pencil(1000);
     }
 
     run() {

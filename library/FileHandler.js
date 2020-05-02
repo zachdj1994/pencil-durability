@@ -5,13 +5,6 @@ class FileHandler {
     writeCallback = function(err, result) {
         if(err) console.log('error', err);
     }
-    readCallback = function(error, data) {
-        if (error) {
-            console.error(error);
-            return;
-        }
-        return data;
-    }
 
     constructor(fileLocation) {
         this.fileLocation = fileLocation;
@@ -26,7 +19,11 @@ class FileHandler {
     }
 
     readFromFile() {
-        return fs.readFile(this.fileLocation, this.readCallback);
+        try {
+            return fs.readFileSync(this.fileLocation, 'utf8');
+        } catch(e) {
+            return undefined;
+        }
     }
 }
 module.exports = FileHandler;

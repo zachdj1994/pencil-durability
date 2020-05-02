@@ -27,9 +27,14 @@ describe("FileHandler", function () {
 
     describe("readFromFile", function () {
         it("should read content from a file", function () {
-            let spy = spyOn(fs, "readFile");
+            let spy = spyOn(fs, "readFileSync");
             handler.readFromFile();
-            expect(spy).toHaveBeenCalledWith(fileLocation, handler.readCallback);
+            expect(spy).toHaveBeenCalledWith(fileLocation, 'utf8');
+        });
+
+        it("should return undefined if there is no file", function () {
+            let spy = spyOn(fs, "readFileSync").and.throwError("");
+            expect(handler.readFromFile()).toEqual(undefined);
         });
     });
 });
