@@ -53,6 +53,12 @@ describe("Pencil", function () {
             expect(pencil.durability).toEqual(12345);
         });
 
+        it("should write to the pencil file if the durability is overridden", function () {
+            let spy = spyOn(pencil.pencilFileHandler, "writeToFile");
+            pencil.setDurability(12345);
+            expect(spy).toHaveBeenCalledWith('durability: 12345');
+        });
+
         it("should set the durability", function () {
             expect(pencil.durability).not.toEqual(undefined);
         });

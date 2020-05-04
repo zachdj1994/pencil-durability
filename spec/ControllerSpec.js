@@ -46,5 +46,37 @@ describe("Controller", function () {
 
             expect(pencilSpy).toHaveBeenCalledWith("text");
         });
+
+        it("should create a new pencil when create is the command", function () {
+            let controller = new Controller;
+            let initialPencil = controller.pencil;
+            let minimistSpy = spyOn(controller.minimist, "getArguments")
+                .and
+                .returnValue(Object({ _: ["create"] }));
+            controller.run();
+
+            expect(initialPencil).not.toEqual(controller.pencil);
+        });
+
+        it("should not create a new pencil when create is not the command", function () {
+            let controller = new Controller;
+            let initialPencil = controller.pencil;
+            let minimistSpy = spyOn(controller.minimist, "getArguments")
+                .and
+                .returnValue(Object({ _: ["hey Alexa"] }));
+            controller.run();
+
+            expect(initialPencil).toEqual(controller.pencil);
+        });
+
+        it("should pass the durability when creating a pencil", function () {
+            let controller = new Controller;
+            let minimistSpy = spyOn(controller.minimist, "getArguments")
+                .and
+                .returnValue(Object({ _: ["create"], point: 10 } ));
+            controller.run();
+
+            expect(controller.pencil.durability).toEqual(10);
+        });
     });
 });

@@ -16,6 +16,7 @@ class Pencil {
     setDurability(durabilityOverride) {
         if (durabilityOverride !== undefined) {
             this.durability = durabilityOverride;
+            this.pencilFileHandler.writeToFile("durability: " + this.durability);
             return;
         }
 

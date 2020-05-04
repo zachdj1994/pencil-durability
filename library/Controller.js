@@ -7,7 +7,7 @@ class Controller {
 
     constructor() {
         this.minimist = new MinimistWrapper;
-        this.pencil = new Pencil(1000);
+        this.pencil = new Pencil();
     }
 
     run() {
@@ -17,6 +17,8 @@ class Controller {
         switch (command) {
             case "write":
                 this.pencil.write(args._[1]);
+            case "create":
+                this.pencil = new Pencil(args.point);
         }
     }
 }
