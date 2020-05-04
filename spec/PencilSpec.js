@@ -23,11 +23,6 @@ describe("Pencil", function () {
         expect(pencil.durability).not.toEqual(undefined);
     });
 
-    it("should allow the durability to be overridden", function () {
-        pencil = new Pencil(12345);
-        expect(pencil.durability).toEqual(12345);
-    });
-
     describe("setDurability", function () {
         it("should set the durability from the pencil file if there's data there", function () {
             pencil.durability = undefined;
@@ -37,13 +32,30 @@ describe("Pencil", function () {
             expect(pencil.durability).toEqual("from the file");
         });
 
-        it("should leave the durability undefined if there's no pencil data", function () {
+        it("should leave the durability undefined if the pencil file is empty", function () {
             pencil.durability = undefined;
-            let spy = spyOn(pencil.pencilFileHandler, "readFromFile").and.returnValue("");
+            let spy = spyOn(pencil.pencilFileHandler, "readFromFile").and.returnValue();
             pencil.setDurability();
             expect(spy).toHaveBeenCalled();
             expect(pencil.durability).toEqual(undefined);
-        })
+        });
+
+        it("should leave the durability undefined if the pencil file does not contain a value", function () {
+            pencil.durability = undefined;
+            let spy = spyOn(pencil.pencilFileHandler, "readFromFile").and.returnValue("durability:");
+            pencil.setDurability();
+            expect(spy).toHaveBeenCalled();
+            expect(pencil.durability).toEqual(undefined);
+        });
+
+        it("should allow the durability to be overridden", function () {
+            pencil.setDurability(12345);
+            expect(pencil.durability).toEqual(12345);
+        });
+
+        it("should set the durability", function () {
+            expect(pencil.durability).not.toEqual(undefined);
+        });
     });
 
     describe("write", function () {

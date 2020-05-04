@@ -10,18 +10,25 @@ class Pencil {
     constructor(durabilityOverride) {
         this.paperFileHandler = new FileHandler(this.paperFileLocation);
         this.pencilFileHandler = new FileHandler(this.pencilFileLocation);
-        if (durabilityOverride == undefined) {
-            this.setDurability();
-        } else {
-            this.durability = durabilityOverride;
-        }
+        this.setDurability(durabilityOverride);
     }
 
-    setDurability() {
-        let parts = this.pencilFileHandler.readFromFile().split(":");
-        if (parts.length > 1) {
-            this.durability = parts[1].trim();
+    setDurability(durabilityOverride) {
+        if (durabilityOverride !== undefined) {
+            this.durability = durabilityOverride;
+            return;
         }
+
+        let content = this.pencilFileHandler.readFromFile();
+        if (content == undefined) {
+            return;
+        }
+        let parts = content.split(":");
+
+        if (parts.length < 2 || parts[1].length < 1) {
+            return;
+        }
+        this.durability = parts[1].trim();
     }
 
     write(text) {
