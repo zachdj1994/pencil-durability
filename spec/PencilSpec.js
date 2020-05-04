@@ -29,11 +29,20 @@ describe("Pencil", function () {
     });
 
     describe("setDurability", function () {
-        it("should set the durability from the pencil file", function () {
-            let spy = spyOn(pencil.pencilFileHandler, "readFromFile").and.returnValue("data from the file");
+        it("should set the durability from the pencil file if there's data there", function () {
+            pencil.durability = undefined;
+            let spy = spyOn(pencil.pencilFileHandler, "readFromFile").and.returnValue("data: from the file");
             pencil.setDurability();
             expect(spy).toHaveBeenCalled();
-            expect(pencil.durability).toEqual("data from the file");
+            expect(pencil.durability).toEqual("from the file");
+        });
+
+        it("should leave the durability undefined if there's no pencil data", function () {
+            pencil.durability = undefined;
+            let spy = spyOn(pencil.pencilFileHandler, "readFromFile").and.returnValue("");
+            pencil.setDurability();
+            expect(spy).toHaveBeenCalled();
+            expect(pencil.durability).toEqual(undefined);
         })
     });
 

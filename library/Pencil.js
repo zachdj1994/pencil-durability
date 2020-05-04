@@ -18,7 +18,10 @@ class Pencil {
     }
 
     setDurability() {
-        this.durability = this.pencilFileHandler.readFromFile();
+        let parts = this.pencilFileHandler.readFromFile().split(":");
+        if (parts.length > 1) {
+            this.durability = parts[1].trim();
+        }
     }
 
     write(text) {
