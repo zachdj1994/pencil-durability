@@ -15,11 +15,14 @@ class FileHandler {
         fs.writeFileSync(this.fileLocation, textToWrite);
     }
 
-    storePencilState(durability, initialDurability) {
+    storePencilState(durability, initialDurability, eraserDurability) {
         fs.truncateSync(this.fileLocation, 0);
         let string = "durability:" + durability;
         if (initialDurability !== undefined) {
             string += ",initialDurability:" + initialDurability;
+        }
+        if (eraserDurability !== undefined) {
+            string += ",eraserDurability:" + eraserDurability;
         }
         fs.writeFileSync(this.fileLocation, string);
     }

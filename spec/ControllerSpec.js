@@ -87,13 +87,31 @@ describe("Controller", function () {
             expect(sharpenSpy).not.toHaveBeenCalled();
         });
 
-        it("should pass the durability when creating a pencil", function () {
+        it("should pass the pencilDurability when creating a pencil", function () {
             let minimistSpy = spyOn(controller.minimist, "getArguments")
                 .and
                 .returnValue(Object({ _: ["create"], point: 10 } ));
             controller.run();
 
-            expect(createSpy).toHaveBeenCalledWith(10);
+            expect(createSpy).toHaveBeenCalledWith(10, undefined);
+        });
+
+        it("should pass the eraserDurability when creating a pencil", function () {
+            let minimistSpy = spyOn(controller.minimist, "getArguments")
+                .and
+                .returnValue(Object({ _: ["create"], eraser: 10 } ));
+            controller.run();
+
+            expect(createSpy).toHaveBeenCalledWith(undefined, 10);
+        });
+
+        it("should not pass the eraserDurability when creating a pencil if undefined", function () {
+            let minimistSpy = spyOn(controller.minimist, "getArguments")
+                .and
+                .returnValue(Object({ _: ["create"]} ));
+            controller.run();
+
+            expect(createSpy).toHaveBeenCalledWith(undefined, undefined);
         });
 
         it("should call the erase method when erase is the command", function () {

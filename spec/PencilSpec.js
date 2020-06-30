@@ -23,30 +23,30 @@ describe("Pencil", function () {
     });
 
     describe("setDurability", function () {
-        it("should set the durability from the pencil file if there's data there", function () {
-            pencil.durability = undefined;
+        it("should set the pencilDurability from the pencil file if there's data there", function () {
+            pencil.pencilDurability = undefined;
             let handlerSpy = spyOn(pencil.pencilFileHandler, "readFromFile");
             let parseSpy = spyOn(pencil, "parsePencilData").and.returnValue({durability: 15});
             pencil.setDurability();
             expect(parseSpy).toHaveBeenCalledTimes(1);
             expect(handlerSpy).toHaveBeenCalledTimes(1);
-            expect(pencil.durability).toEqual(15);
+            expect(pencil.pencilDurability).toEqual(15);
         });
 
-        it("should leave the durability undefined if the pencil file is empty", function () {
-            pencil.durability = undefined;
+        it("should leave the pencilDurability undefined if the pencil file is empty", function () {
+            pencil.pencilDurability = undefined;
             let spy = spyOn(pencil, "parsePencilData").and.returnValue({});
             pencil.setDurability();
             expect(spy).toHaveBeenCalled();
-            expect(pencil.durability).toEqual(undefined);
+            expect(pencil.pencilDurability).toEqual(undefined);
         });
 
-        it("should leave the durability undefined if the pencil file does not contain a value", function () {
-            pencil.durability = undefined;
+        it("should leave the pencilDurability undefined if the pencil file does not contain a value", function () {
+            pencil.pencilDurability = undefined;
             let spy = spyOn(pencil, "parsePencilData").and.returnValue({durability: undefined});
             pencil.setDurability();
             expect(spy).toHaveBeenCalled();
-            expect(pencil.durability).toEqual(undefined);
+            expect(pencil.pencilDurability).toEqual(undefined);
         });
     });
 
@@ -55,19 +55,24 @@ describe("Pencil", function () {
             pencilHandlerSpy = spyOn(pencil.pencilFileHandler, "storePencilState");
         });
 
-        it("should set the pencil durability", function () {
-            pencil.create(10);
-            expect(pencil.durability).toEqual(10);
+        it("should set the eraserDurability", function () {
+            pencil.create(undefined, 5);
+            expect(pencil.eraserDurability).toEqual(5);
         });
 
-        it("should set the initial pencil durability", function () {
+        it("should set the pencilDurability", function () {
             pencil.create(10);
-            expect(pencil.initialDurability).toEqual(10);
+            expect(pencil.pencilDurability).toEqual(10);
+        });
+
+        it("should set the initialPencilDurability", function () {
+            pencil.create(10);
+            expect(pencil.initialPencilDurability).toEqual(10);
         });
 
         it("should store the pencil's state", function () {
-            pencil.create(10);
-            expect(pencilHandlerSpy).toHaveBeenCalledWith(10, 10);
+            pencil.create(10, 5);
+            expect(pencilHandlerSpy).toHaveBeenCalledWith(10, 10, 5);
         });
     });
 
@@ -97,9 +102,9 @@ describe("Pencil", function () {
             expect(durabilitySpy).toHaveBeenCalled();
         });
 
-        it("should store the pencil's state using initial durability", function () {
-            pencil.initialDurability = 10;
-            pencil.durability = 5;
+        it("should store the pencil's state using initial pencilDurability", function () {
+            pencil.initialPencilDurability = 10;
+            pencil.pencilDurability = 5;
             pencil.sharpen();
             expect(pencilHandlerSpy).toHaveBeenCalledWith(10, 10);
         });
@@ -114,31 +119,31 @@ describe("Pencil", function () {
 
         it("should pass the text to the FileHandler to write", function () {
             let text = "test data";
-            pencil.durability = undefined;
+            pencil.pencilDurability = undefined;
 
             pencil.write(text);
             expect(paperHandlerAppendToSpy).toHaveBeenCalledWith(text);
         });
 
-        it("should determine which text can be written if the durability is defined", function () {
-            pencil.durability = 8;
+        it("should determine which text can be written if the pencilDurability is defined", function () {
+            pencil.pencilDurability = 8;
             let writableTextSpy = spyOn(pencil, "getWritableText");
 
             pencil.write("test data");
             expect(writableTextSpy).toHaveBeenCalled();
         });
 
-        it("should not determine which text can be written if the durability is not defined", function () {
+        it("should not determine which text can be written if the pencilDurability is not defined", function () {
             let writableTextSpy = spyOn(pencil, "getWritableText");
-            pencil.durability = undefined;
+            pencil.pencilDurability = undefined;
 
             pencil.write("test data");
             expect(writableTextSpy).not.toHaveBeenCalled();
         });
 
         it("should write the pencil's current state to temporary storage", function () {
-            pencil.initialDurability = 10;
-            pencil.durability = 10;
+            pencil.initialPencilDurability = 10;
+            pencil.pencilDurability = 10;
             pencil.write("test data");
             expect(pencilHandlerSpy).toHaveBeenCalledWith(2, 10);
             expect(pencilHandlerSpy).toHaveBeenCalledTimes(1);
@@ -152,7 +157,7 @@ describe("Pencil", function () {
         });
 
         it("should degrade the pencil for each character", function () {
-            pencil.durability = 8;
+            pencil.pencilDurability = 8;
             let degradePencilSpy = spyOn(pencil, "degradePencil");
 
             pencil.getWritableText("test data");
@@ -160,13 +165,13 @@ describe("Pencil", function () {
         });
 
         it("should return the text it was passed if the pencil does not degrade", function () {
-            pencil.durability = 8;
+            pencil.pencilDurability = 8;
 
             expect(pencil.getWritableText("test data")).toEqual("test data");
         });
 
         it("should blank the correct number of characters when the pencil degrades", function () {
-            pencil.durability = 8;
+            pencil.pencilDurability = 8;
 
             expect(pencil.getWritableText("test data more")).toEqual("test data     ");
         });
@@ -242,38 +247,38 @@ describe("Pencil", function () {
 
     describe("degradePencil", function () {
         it("should not degrade the pencil when writing a space", function () {
-            pencil.durability = 2;
+            pencil.pencilDurability = 2;
             let spy = spyOn(pencil, "isSpace").and.returnValue(true);
             pencil.degradePencil(" ");
-            expect(pencil.durability).toEqual(2);
+            expect(pencil.pencilDurability).toEqual(2);
         });
 
         it("should degrade the pencil by 1 point when writing a numeral", function () {
-            pencil.durability = 2;
+            pencil.pencilDurability = 2;
             let spy = spyOn(pencil, "isNumber").and.returnValue(true);
             pencil.degradePencil("1");
-            expect(pencil.durability).toEqual(1);
+            expect(pencil.pencilDurability).toEqual(1);
         });
 
         it("should degrade the pencil by 1 point when writing a special character", function () {
-            pencil.durability = 2;
+            pencil.pencilDurability = 2;
             let spy = spyOn(pencil, "isSpecialCharacter").and.returnValue(true);
             pencil.degradePencil("%");
-            expect(pencil.durability).toEqual(1);
+            expect(pencil.pencilDurability).toEqual(1);
         });
 
         it("should degrade the pencil by 1 point when writing a lowercase letter", function () {
-            pencil.durability = 2;
+            pencil.pencilDurability = 2;
             let spy = spyOn(pencil, "isLowerCase").and.returnValue(true);
             pencil.degradePencil("a");
-            expect(pencil.durability).toEqual(1);
+            expect(pencil.pencilDurability).toEqual(1);
         });
 
         it("should degrade the pencil by 2 points when writing an uppercase letter", function () {
-            pencil.durability = 2;
+            pencil.pencilDurability = 2;
             let spy = spyOn(pencil, "isUpperCase").and.returnValue(true);
             pencil.degradePencil("A");
-            expect(pencil.durability).toEqual(0);
+            expect(pencil.pencilDurability).toEqual(0);
         });
     });
 });

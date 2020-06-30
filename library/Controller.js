@@ -19,7 +19,7 @@ class Controller {
                 this.pencil.write(args._[1]);
                 break;
             case "create":
-                this.pencil.create(args.point);
+                this.pencil.create(args.point, args.eraser);
                 break;
             case "sharpen":
                 this.pencil.sharpen();

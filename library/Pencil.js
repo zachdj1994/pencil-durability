@@ -5,8 +5,9 @@ class Pencil {
     pencilFileLocation = "data/pencil.txt";
     paperFileHandler;
     pencilFileHandler;
-    durability;
-    initialDurability;
+    pencilDurability;
+    initialPencilDurability;
+    eraserDurability;
 
     constructor() {
         this.paperFileHandler = new FileHandler(this.paperFileLocation);
@@ -15,23 +16,24 @@ class Pencil {
 
     sharpen() {
         this.setDurability();
-        this.pencilFileHandler.storePencilState(this.initialDurability, this.initialDurability);
+        this.pencilFileHandler.storePencilState(this.initialPencilDurability, this.initialPencilDurability);
     }
 
     write(text) {
         this.setDurability();
-        if (this.durability !== 'undefined' && this.durability !== undefined) {
+        if (this.pencilDurability !== 'undefined' && this.pencilDurability !== undefined) {
             text = this.getWritableText(text);
         }
 
         this.paperFileHandler.appendToFile(text);
-        this.pencilFileHandler.storePencilState(this.durability, this.initialDurability);
+        this.pencilFileHandler.storePencilState(this.pencilDurability, this.initialPencilDurability);
     }
 
-    create(initialDurability) {
-        this.durability = initialDurability;
-        this.initialDurability = initialDurability;
-        this.pencilFileHandler.storePencilState(this.durability, this.durability);
+    create(initialDurability, eraserDurability) {
+        this.pencilDurability = initialDurability;
+        this.initialPencilDurability = initialDurability;
+        this.eraserDurability = eraserDurability;
+        this.pencilFileHandler.storePencilState(initialDurability, initialDurability, eraserDurability);
     }
 
     erase(textToErase) {
@@ -51,11 +53,11 @@ class Pencil {
     setDurability() {
         let pencilData = this.parsePencilData(this.pencilFileHandler.readFromFile());
         if (pencilData.durability !== undefined && pencilData.durability !== "") {
-            this.durability = pencilData.durability;
+            this.pencilDurability = pencilData.durability;
         }
 
         if (pencilData.initialDurability !== undefined  && pencilData.durability !== "") {
-            this.initialDurability = pencilData.initialDurability;
+            this.initialPencilDurability = pencilData.initialDurability;
         }
     }
 
@@ -73,7 +75,7 @@ class Pencil {
     getWritableText(initialText) {
         let writableText = "";
         for (let i = 0; i < initialText.length; i++) {
-            if (this.durability > 0) {
+            if (this.pencilDurability > 0) {
                 writableText += initialText.charAt(i);
             } else {
                 writableText += " ";
@@ -86,15 +88,15 @@ class Pencil {
 
     degradePencil(character) {
         if(this.isSpace(character)) {
-            this.durability -= 0;
+            this.pencilDurability -= 0;
         } else if (
             this.isNumber(character) ||
             this.isSpecialCharacter(character) ||
             this.isLowerCase(character)
         ) {
-            this.durability--;
+            this.pencilDurability--;
         } else if (this.isUpperCase(character)) {
-            this.durability -= 2;
+            this.pencilDurability -= 2;
         }
     }
 
