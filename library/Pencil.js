@@ -39,15 +39,20 @@ class Pencil {
     erase(textToErase) {
         let currentText = this.paperFileHandler.readFromFile();
         let startIndex = currentText.lastIndexOf(textToErase);
-        let newText = currentText;
+        let endIndex = startIndex + textToErase.length;
         if (startIndex > -1) {
-            for(let i = startIndex; i < startIndex + textToErase.length; i++) {
-                newText = newText.substring(0, i) + ' ';
+            let newText = currentText.substring(endIndex);
+            let currentIndex = endIndex;
+            for(let i = endIndex; i > startIndex; i--) {
+                if (this.eraserDurability > 0) {
+                    newText = ' ' + newText;
+                    currentIndex = i - 1;
+                    this.eraserDurability--;
+                }
             }
-            newText = newText + currentText.substring(startIndex+ textToErase.length);
+            newText = currentText.substring(0, currentIndex) + newText;
+            this.paperFileHandler.writeToFileFromScratch(newText);
         }
-
-        this.paperFileHandler.writeToFileFromScratch(newText);
     }
 
     setDurability() {

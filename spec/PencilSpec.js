@@ -82,11 +82,18 @@ describe("Pencil", function () {
                 .and.returnValue('teststufftextstufftext');
             paperHandlerWriteSpy = spyOn(pencil.paperFileHandler, "writeToFileFromScratch");
             pencilHandlerSpy = spyOn(pencil.pencilFileHandler, "storePencilState");
+            pencil.eraserDurability = 5;
         });
 
         it("should erase the last instance of specified text from a string", function () {
             pencil.erase('stuff');
             expect(paperHandlerWriteSpy).toHaveBeenCalledWith('teststufftext     text');
+            expect(paperHandlerReadFromSpy).toHaveBeenCalled();
+        });
+
+        it("should stop erasing when the eraser is degraded", function () {
+            pencil.erase('stuffte');
+            expect(paperHandlerWriteSpy).toHaveBeenCalledWith('teststufftextst     xt');
             expect(paperHandlerReadFromSpy).toHaveBeenCalled();
         });
     });
