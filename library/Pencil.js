@@ -6,39 +6,54 @@ class Pencil {
     paperFileHandler;
     pencilFileHandler;
     durability;
+    initialDurability;
 
-    constructor(durabilityOverride) {
+    constructor() {
         this.paperFileHandler = new FileHandler(this.paperFileLocation);
         this.pencilFileHandler = new FileHandler(this.pencilFileLocation);
-        this.setDurability(durabilityOverride);
     }
 
-    setDurability(durabilityOverride) {
-        if (durabilityOverride !== undefined) {
-            this.durability = durabilityOverride;
-            this.pencilFileHandler.writeToFile("durability: " + this.durability);
-            return;
-        }
-
-        let content = this.pencilFileHandler.readFromFile();
-        if (content == undefined) {
-            return;
-        }
-        let parts = content.split(":");
-
-        if (parts.length < 2 || parts[1].length < 1) {
-            return;
-        }
-        this.durability = parts[1].trim();
+    sharpen() {
+        this.setDurability();
+        this.pencilFileHandler.storePencilState(this.initialDurability, this.initialDurability);
     }
 
     write(text) {
-        if (this.durability != undefined) {
-            text = this.getWritableText(text)
+        this.setDurability();
+        if (this.durability !== 'undefined' && this.durability !== undefined) {
+            text = this.getWritableText(text);
         }
 
         this.paperFileHandler.appendToFile(text);
-        this.pencilFileHandler.writeToFile("durability: " + this.durability);
+        this.pencilFileHandler.storePencilState(this.durability, this.initialDurability);
+    }
+
+    create(initialDurability) {
+        this.durability = initialDurability;
+        this.initialDurability = initialDurability;
+        this.pencilFileHandler.storePencilState(this.durability, this.durability);
+    }
+
+    setDurability() {
+        let pencilData = this.parsePencilData(this.pencilFileHandler.readFromFile());
+        if (pencilData.durability !== undefined && pencilData.durability !== "") {
+            this.durability = pencilData.durability;
+        }
+
+        if (pencilData.initialDurability !== undefined  && pencilData.durability !== "") {
+            this.initialDurability = pencilData.initialDurability;
+        }
+    }
+
+    parsePencilData(content) {
+        let properties = content.split(",");
+        let data = {};
+        for (let i = 0; i < properties.length; i++) {
+            let parts = properties[i].split(":");
+            data[parts[0]] = parts[1];
+        }
+
+        return data;
     }
 
     getWritableText(initialText) {

@@ -17,8 +17,13 @@ class Controller {
         switch (command) {
             case "write":
                 this.pencil.write(args._[1]);
+                break;
             case "create":
-                this.pencil = new Pencil(args.point);
+                this.pencil.create(args.point);
+                break;
+            case "sharpen":
+                this.pencil.sharpen();
+                break
         }
     }
 }

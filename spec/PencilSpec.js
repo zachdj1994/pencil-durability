@@ -2,6 +2,7 @@ const Pencil = require("./../library/Pencil");
 const FileHandler = require("./../library/FileHandler");
 let paperHandlerSpy;
 let pencilHandlerSpy;
+let durabilitySpy;
 let pencil;
 
 describe("Pencil", function () {
@@ -19,22 +20,20 @@ describe("Pencil", function () {
         expect(pencil.pencilFileHandler.fileLocation).toEqual(pencil.pencilFileLocation)
     });
 
-    it("should set the durability", function () {
-        expect(pencil.durability).not.toEqual(undefined);
-    });
-
     describe("setDurability", function () {
         it("should set the durability from the pencil file if there's data there", function () {
             pencil.durability = undefined;
-            let spy = spyOn(pencil.pencilFileHandler, "readFromFile").and.returnValue("data: from the file");
+            let handlerSpy = spyOn(pencil.pencilFileHandler, "readFromFile");
+            let parseSpy = spyOn(pencil, "parsePencilData").and.returnValue({durability: 15});
             pencil.setDurability();
-            expect(spy).toHaveBeenCalled();
-            expect(pencil.durability).toEqual("from the file");
+            expect(parseSpy).toHaveBeenCalledTimes(1);
+            expect(handlerSpy).toHaveBeenCalledTimes(1);
+            expect(pencil.durability).toEqual(15);
         });
 
         it("should leave the durability undefined if the pencil file is empty", function () {
             pencil.durability = undefined;
-            let spy = spyOn(pencil.pencilFileHandler, "readFromFile").and.returnValue();
+            let spy = spyOn(pencil, "parsePencilData").and.returnValue({});
             pencil.setDurability();
             expect(spy).toHaveBeenCalled();
             expect(pencil.durability).toEqual(undefined);
@@ -42,32 +41,58 @@ describe("Pencil", function () {
 
         it("should leave the durability undefined if the pencil file does not contain a value", function () {
             pencil.durability = undefined;
-            let spy = spyOn(pencil.pencilFileHandler, "readFromFile").and.returnValue("durability:");
+            let spy = spyOn(pencil, "parsePencilData").and.returnValue({durability: undefined});
             pencil.setDurability();
             expect(spy).toHaveBeenCalled();
             expect(pencil.durability).toEqual(undefined);
         });
+    });
 
-        it("should allow the durability to be overridden", function () {
-            pencil.setDurability(12345);
-            expect(pencil.durability).toEqual(12345);
+    describe("create", function () {
+        beforeEach(function () {
+            pencilHandlerSpy = spyOn(pencil.pencilFileHandler, "storePencilState")
         });
 
-        it("should write to the pencil file if the durability is overridden", function () {
-            let spy = spyOn(pencil.pencilFileHandler, "writeToFile");
-            pencil.setDurability(12345);
-            expect(spy).toHaveBeenCalledWith('durability: 12345');
+        it("should set the pencil durability", function () {
+            pencil.create(10);
+            expect(pencil.durability).toEqual(10);
         });
 
-        it("should set the durability", function () {
-            expect(pencil.durability).not.toEqual(undefined);
+        it("should set the initial pencil durability", function () {
+            pencil.create(10);
+            expect(pencil.initialDurability).toEqual(10);
+        });
+
+        it("should store the pencil's state", function () {
+            pencil.create(10);
+            expect(pencilHandlerSpy).toHaveBeenCalledWith(10, 10);
+        });
+    });
+
+    describe("sharpen", function () {
+        beforeEach(function () {
+            pencilHandlerSpy = spyOn(pencil.pencilFileHandler, "storePencilState")
+        });
+
+        it("should retrieve the stored pencil data from the file", function () {
+            let spy = spyOn(pencil, "setDurability");
+            pencil.sharpen();
+            expect(spy).toHaveBeenCalled();
+        });
+
+        it("should store the pencil's state using initial durability", function () {
+            pencil.initialDurability = 10;
+            pencil.durability = 5;
+            pencil.sharpen();
+            expect(pencilHandlerSpy).toHaveBeenCalledWith('10', '10');
         });
     });
 
     describe("write", function () {
         beforeEach(function() {
             paperHandlerSpy = spyOn(pencil.paperFileHandler, "appendToFile");
-            pencilHandlerSpy = spyOn(pencil.pencilFileHandler, "writeToFile");
+            pencilHandlerSpy = spyOn(pencil.pencilFileHandler, "storePencilState")
+            durabilitySpy = spyOn(pencil, "setDurability");
         });
 
         it("should pass the text to the FileHandler to write", function () {
@@ -95,10 +120,11 @@ describe("Pencil", function () {
         });
 
         it("should write the pencil's current state to temporary storage", function () {
+            pencil.initialDurability = 10;
             pencil.durability = 10;
-
             pencil.write("test data");
-            expect(pencilHandlerSpy).toHaveBeenCalledWith("durability: 2");
+            expect(pencilHandlerSpy).toHaveBeenCalledWith(2, 10);
+            expect(pencilHandlerSpy).toHaveBeenCalledTimes(1);
         });
     });
 

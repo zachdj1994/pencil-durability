@@ -2,20 +2,22 @@ const fs = require("fs");
 
 class FileHandler {
     fileLocation = "";
-    writeCallback = function(err, result) {
-        if(err) console.log('error', err);
-    }
 
     constructor(fileLocation) {
         this.fileLocation = fileLocation;
     }
 
     appendToFile(textToWrite) {
-        fs.appendFile(this.fileLocation, textToWrite, this.writeCallback);
+        fs.appendFileSync(this.fileLocation, textToWrite);
     }
 
-    writeToFile(textToWrite) {
-        fs.writeFile(this.fileLocation, textToWrite, this.writeCallback);
+    storePencilState(durability, initialDurability) {
+        fs.truncateSync(this.fileLocation, 0);
+        let string = "durability:" + durability;
+        if (initialDurability !== undefined) {
+            string += ",initialDurability:" + initialDurability;
+        }
+        fs.writeFileSync(this.fileLocation, string);
     }
 
     readFromFile() {
