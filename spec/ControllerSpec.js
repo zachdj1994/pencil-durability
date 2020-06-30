@@ -4,6 +4,7 @@ const Pencil = require("./../library/Pencil");
 let writeSpy;
 let sharpenSpy;
 let createSpy;
+let eraseSpy;
 let controller;
 
 describe("Controller", function () {
@@ -23,6 +24,7 @@ describe("Controller", function () {
             writeSpy = spyOn(controller.pencil, "write");
             createSpy = spyOn(controller.pencil, "create");
             sharpenSpy = spyOn(controller.pencil, "sharpen");
+            eraseSpy = spyOn(controller.pencil, "erase");
         });
 
         it("should call the write method when write is the command", function () {
@@ -92,6 +94,26 @@ describe("Controller", function () {
             controller.run();
 
             expect(createSpy).toHaveBeenCalledWith(10);
+        });
+
+        it("should call the erase method when erase is the command", function () {
+            let minimistSpy = spyOn(controller.minimist, "getArguments")
+                .and
+                .returnValue(Object({ _: ["erase"] }));
+            controller.run();
+
+            expect(eraseSpy).toHaveBeenCalledTimes(1);
+            expect(createSpy).not.toHaveBeenCalled();
+            expect(sharpenSpy).not.toHaveBeenCalled();
+        });
+
+        it("should not call the erase method when erase is not the command", function () {
+            let minimistSpy = spyOn(controller.minimist, "getArguments")
+                .and
+                .returnValue(Object({ _: ["write"] }));
+            controller.run();
+
+            expect(eraseSpy).not.toHaveBeenCalled();
         });
     });
 });

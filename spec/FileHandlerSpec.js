@@ -17,6 +17,14 @@ describe("FileHandler", function () {
         });
     });
 
+    describe("writeToFileFromScratch", function () {
+        it("should write content to a file", function () {
+            let spy = spyOn(fs, "writeFileSync");
+            handler.writeToFileFromScratch('test data');
+            expect(spy).toHaveBeenCalledWith(fileLocation, 'test data');
+        });
+    });
+
     describe("storePencilState", function () {
         it("should write content to a new file", function () {
             let writeSpy = spyOn(fs, "writeFileSync");

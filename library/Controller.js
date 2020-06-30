@@ -23,7 +23,10 @@ class Controller {
                 break;
             case "sharpen":
                 this.pencil.sharpen();
-                break
+                break;
+            case "erase":
+                this.pencil.erase(args._[1]);
+                break;
         }
     }
 }

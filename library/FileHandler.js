@@ -11,6 +11,10 @@ class FileHandler {
         fs.appendFileSync(this.fileLocation, textToWrite);
     }
 
+    writeToFileFromScratch(textToWrite) {
+        fs.writeFileSync(this.fileLocation, textToWrite);
+    }
+
     storePencilState(durability, initialDurability) {
         fs.truncateSync(this.fileLocation, 0);
         let string = "durability:" + durability;
