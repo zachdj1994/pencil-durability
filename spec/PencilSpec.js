@@ -157,6 +157,60 @@ describe("Pencil", function () {
         });
     });
 
+    describe("edit", function () {
+        beforeEach(function() {
+            paperHandlerReadFromSpy = spyOn(pencil.paperFileHandler, "readFromFile")
+                .and.returnValue('te  st  ata');
+            paperHandlerAppendToSpy = spyOn(pencil.paperFileHandler, "writeToFileFromScratch");
+            pencilHandlerSpy = spyOn(pencil.pencilFileHandler, "storePencilState");
+            durabilitySpy = spyOn(pencil, "setDurability");
+        });
+
+        it("should read the existing text from local storage", function () {
+            pencil.edit('test');
+            expect(paperHandlerReadFromSpy).toHaveBeenCalled();
+        });
+
+        it("should pass the text to the FileHandler to write", function () {
+            pencil.pencilDurability = undefined;
+
+            pencil.edit("aaa");
+            expect(paperHandlerAppendToSpy).toHaveBeenCalledWith('te  st a@@a');
+        });
+
+        it("should determine which text can be written if the pencilDurability is defined", function () {
+            pencil.pencilDurability = 8;
+            let writableTextSpy = spyOn(pencil, "getWritableText").and.returnValue('aaa');
+
+            pencil.edit("aaa");
+            expect(writableTextSpy).toHaveBeenCalled();
+        });
+
+        it("should not determine which text can be written if the pencilDurability is not defined", function () {
+            let writableTextSpy = spyOn(pencil, "getWritableText");
+            pencil.pencilDurability = undefined;
+
+            pencil.edit("aaa");
+            expect(writableTextSpy).not.toHaveBeenCalled();
+        });
+
+        it("should write the pencil's current state to temporary storage", function () {
+            pencil.initialPencilDurability = 10;
+            pencil.pencilDurability = 10;
+            pencil.edit("aaa");
+            expect(pencilHandlerSpy).toHaveBeenCalledWith(7, 10);
+            expect(pencilHandlerSpy).toHaveBeenCalledTimes(1);
+        });
+
+        it("should not edit anything if nothing has been erased", function () {
+            pencil.pencilDurability = undefined;
+            paperHandlerReadFromSpy.and.returnValue('test data');
+
+            pencil.edit("aaa");
+            expect(paperHandlerAppendToSpy).not.toHaveBeenCalled();
+        });
+    });
+
     describe("getWritableText", function () {
         beforeEach(function() {
             paperHandlerAppendToSpy = spyOn(pencil.paperFileHandler, "appendToFile");

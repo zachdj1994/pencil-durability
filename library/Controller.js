@@ -27,6 +27,9 @@ class Controller {
             case "erase":
                 this.pencil.erase(args._[1]);
                 break;
+            case "edit":
+                this.pencil.edit(args._[1]);
+                break;
         }
     }
 }

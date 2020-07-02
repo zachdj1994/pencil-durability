@@ -5,6 +5,7 @@ let writeSpy;
 let sharpenSpy;
 let createSpy;
 let eraseSpy;
+let editSpy;
 let controller;
 
 describe("Controller", function () {
@@ -25,6 +26,7 @@ describe("Controller", function () {
             createSpy = spyOn(controller.pencil, "create");
             sharpenSpy = spyOn(controller.pencil, "sharpen");
             eraseSpy = spyOn(controller.pencil, "erase");
+            editSpy = spyOn(controller.pencil, "edit");
         });
 
         it("should call the write method when write is the command", function () {
@@ -132,6 +134,26 @@ describe("Controller", function () {
             controller.run();
 
             expect(eraseSpy).not.toHaveBeenCalled();
+        });
+
+        it("should call the edit method when edit is the command", function () {
+            let minimistSpy = spyOn(controller.minimist, "getArguments")
+                .and
+                .returnValue(Object({ _: ["edit"] }));
+            controller.run();
+
+            expect(editSpy).toHaveBeenCalledTimes(1);
+            expect(createSpy).not.toHaveBeenCalled();
+            expect(sharpenSpy).not.toHaveBeenCalled();
+        });
+
+        it("should not call the edit method when edit is not the command", function () {
+            let minimistSpy = spyOn(controller.minimist, "getArguments")
+                .and
+                .returnValue(Object({ _: ["write"] }));
+            controller.run();
+
+            expect(editSpy).not.toHaveBeenCalled();
         });
     });
 });

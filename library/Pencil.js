@@ -38,21 +38,54 @@ class Pencil {
 
     erase(textToErase) {
         let currentText = this.paperFileHandler.readFromFile();
-        let startIndex = currentText.lastIndexOf(textToErase);
+        let startIndex = currentText.lastIndexOf(textToErase.trim());
         let endIndex = startIndex + textToErase.length;
-        if (startIndex > -1) {
-            let newText = currentText.substring(endIndex);
-            let currentIndex = endIndex;
-            for(let i = endIndex; i > startIndex; i--) {
-                if (this.eraserDurability > 0) {
-                    newText = ' ' + newText;
-                    currentIndex = i - 1;
-                    this.eraserDurability--;
-                }
-            }
-            newText = currentText.substring(0, currentIndex) + newText;
-            this.paperFileHandler.writeToFileFromScratch(newText);
+
+        if (startIndex < 0) {
+            return;
         }
+
+        let newText = currentText.substring(endIndex);
+        let currentIndex = endIndex;
+        for (let i = endIndex; i > startIndex; i--) {
+            if (this.eraserDurability > 0) {
+                newText = ' ' + newText;
+                currentIndex = i - 1;
+                this.eraserDurability--;
+            }
+        }
+        newText = currentText.substring(0, currentIndex) + newText;
+        this.paperFileHandler.writeToFileFromScratch(newText);
+    }
+
+    edit(textToAdd) {
+        let currentText = this.paperFileHandler.readFromFile();
+        let startIndex = currentText.lastIndexOf('  ') + 1;
+
+        if (startIndex < 1) {
+            return;
+        }
+
+        //will stop writing and leave existing text in place if the pencil is degraded
+        if (this.pencilDurability !== 'undefined' && this.pencilDurability !== undefined) {
+            textToAdd = this.getWritableText(textToAdd).trim();
+        }
+
+        let endIndex = startIndex + textToAdd.length;
+        let newText = currentText.substring(0, startIndex);
+        let currentIteration = 0;
+        for (startIndex; startIndex < endIndex; startIndex++) {
+            if (currentText.substring(startIndex, startIndex + 1) === ' ') {
+                newText += textToAdd.substring(currentIteration, currentIteration + 1);
+            } else {
+                newText += '@';
+            }
+            currentIteration++;
+        }
+
+        newText += currentText.substring(startIndex);
+        this.paperFileHandler.writeToFileFromScratch(newText);
+        this.pencilFileHandler.storePencilState(this.pencilDurability, this.initialPencilDurability);
     }
 
     setDurability() {
@@ -61,7 +94,7 @@ class Pencil {
             this.pencilDurability = pencilData.durability;
         }
 
-        if (pencilData.initialDurability !== undefined  && pencilData.durability !== "") {
+        if (pencilData.initialDurability !== undefined && pencilData.durability !== "") {
             this.initialPencilDurability = pencilData.initialDurability;
         }
     }
@@ -92,7 +125,7 @@ class Pencil {
     }
 
     degradePencil(character) {
-        if(this.isSpace(character)) {
+        if (this.isSpace(character)) {
             this.pencilDurability -= 0;
         } else if (
             this.isNumber(character) ||
@@ -125,4 +158,5 @@ class Pencil {
         return character == character.toUpperCase();
     }
 }
+
 module.exports = Pencil;
