@@ -5,6 +5,7 @@ let paperHandlerReadFromSpy;
 let paperHandlerWriteSpy;
 let pencilHandlerSpy;
 let durabilitySpy;
+let blankSpaceIndexSpy;
 let pencil;
 
 describe("Pencil", function () {
@@ -150,6 +151,15 @@ describe("Pencil", function () {
             expect(paperHandlerWriteSpy).toHaveBeenCalledWith('teststufftextst     xt');
             expect(paperHandlerReadFromSpy).toHaveBeenCalled();
         });
+
+        it("should write the pencil's current state to temporary storage", function () {
+            pencil.initialPencilDurability = 10;
+            pencil.pencilDurability = 10;
+            pencil.eraserDurability = 5;
+            pencil.erase("test");
+            expect(pencilHandlerSpy).toHaveBeenCalledWith(10, 10, 1);
+            expect(pencilHandlerSpy).toHaveBeenCalledTimes(1);
+        });
     });
 
     describe("sharpen", function () {
@@ -166,8 +176,9 @@ describe("Pencil", function () {
         it("should store the pencil's state using initial pencilDurability", function () {
             pencil.initialPencilDurability = 10;
             pencil.pencilDurability = 5;
+            pencil.eraserDurability = 3
             pencil.sharpen();
-            expect(pencilHandlerSpy).toHaveBeenCalledWith(10, 10);
+            expect(pencilHandlerSpy).toHaveBeenCalledWith(10, 10, 3);
         });
     });
 
@@ -205,8 +216,9 @@ describe("Pencil", function () {
         it("should write the pencil's current state to temporary storage", function () {
             pencil.initialPencilDurability = 10;
             pencil.pencilDurability = 10;
+            pencil.eraserDurability = 3;
             pencil.write("test data");
-            expect(pencilHandlerSpy).toHaveBeenCalledWith(2, 10);
+            expect(pencilHandlerSpy).toHaveBeenCalledWith(2, 10, 3);
             expect(pencilHandlerSpy).toHaveBeenCalledTimes(1);
         });
     });
@@ -218,6 +230,7 @@ describe("Pencil", function () {
             paperHandlerAppendToSpy = spyOn(pencil.paperFileHandler, "writeToFileFromScratch");
             pencilHandlerSpy = spyOn(pencil.pencilFileHandler, "storePencilState");
             durabilitySpy = spyOn(pencil, "setDurability");
+            blankSpaceIndexSpy = spyOn(pencil, "getLastBlankSpaceIndex").and.returnValue(7);
         });
 
         it("should read the existing text from local storage", function () {
@@ -251,17 +264,31 @@ describe("Pencil", function () {
         it("should write the pencil's current state to temporary storage", function () {
             pencil.initialPencilDurability = 10;
             pencil.pencilDurability = 10;
+            pencil.eraserDurability = 3;
             pencil.edit("aaa");
-            expect(pencilHandlerSpy).toHaveBeenCalledWith(7, 10);
+            expect(pencilHandlerSpy).toHaveBeenCalledWith(7, 10, 3);
             expect(pencilHandlerSpy).toHaveBeenCalledTimes(1);
         });
 
         it("should not edit anything if nothing has been erased", function () {
+            blankSpaceIndexSpy.and.returnValue(-1);
             pencil.pencilDurability = undefined;
             paperHandlerReadFromSpy.and.returnValue('test data');
 
             pencil.edit("aaa");
             expect(paperHandlerAppendToSpy).not.toHaveBeenCalled();
+        });
+    });
+
+    describe("getLastBlankSpaceIndex", function () {
+        it("should return -1 if there are no consecutive spaces", function () {
+            let result = pencil.getLastBlankSpaceIndex('test test test');
+            expect(result).toEqual(-1);
+        });
+
+        it("should return the  index of the second space in series of consecutive spaces", function () {
+            let result = pencil.getLastBlankSpaceIndex('test  test  test');
+            expect(result).toEqual(11);
         });
     });
 

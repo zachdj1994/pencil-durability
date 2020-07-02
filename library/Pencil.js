@@ -16,7 +16,7 @@ class Pencil {
 
     sharpen() {
         this.setDurability();
-        this.pencilFileHandler.storePencilState(this.initialPencilDurability, this.initialPencilDurability);
+        this.pencilFileHandler.storePencilState(this.initialPencilDurability, this.initialPencilDurability, this.eraserDurability);
     }
 
     write(text) {
@@ -26,7 +26,7 @@ class Pencil {
         }
 
         this.paperFileHandler.appendToFile(text);
-        this.pencilFileHandler.storePencilState(this.pencilDurability, this.initialPencilDurability);
+        this.pencilFileHandler.storePencilState(this.pencilDurability, this.initialPencilDurability, this.eraserDurability);
     }
 
     create(initialDurability, eraserDurability) {
@@ -61,15 +61,16 @@ class Pencil {
 
         newText = currentText.substring(0, currentIndex) + newText;
 
+        this.pencilFileHandler.storePencilState(this.pencilDurability, this.initialPencilDurability, this.eraserDurability);
         this.paperFileHandler.writeToFileFromScratch(newText);
     }
 
     edit(textToAdd) {
         this.setDurability();
         let currentText = this.paperFileHandler.readFromFile();
-        let startIndex = currentText.lastIndexOf('  ') + 1;
+        let startIndex = this.getLastBlankSpaceIndex(currentText);
 
-        if (startIndex < 1) {
+        if (startIndex < 0) {
             return;
         }
 
@@ -92,7 +93,22 @@ class Pencil {
 
         newText += currentText.substring(startIndex);
         this.paperFileHandler.writeToFileFromScratch(newText);
-        this.pencilFileHandler.storePencilState(this.pencilDurability, this.initialPencilDurability);
+        this.pencilFileHandler.storePencilState(this.pencilDurability, this.initialPencilDurability, this.eraserDurability);
+    }
+
+    getLastBlankSpaceIndex(text) {
+        let regex = /[ ]{2,}/g;
+        let match;
+        let matches = [];
+        while ((match = regex.exec(text)) != null) {
+            matches.push(match.index)
+        }
+
+        if (matches.length < 1) {
+            return -1;
+        }
+
+        return matches[matches.length - 1] + 1;
     }
 
     setDurability() {
