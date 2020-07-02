@@ -23,13 +23,16 @@ describe("Pencil", function () {
     });
 
     describe("setDurability", function () {
+        beforeEach(function () {
+            pencilHandlerSpy = spyOn(pencil.pencilFileHandler, "readFromFile");
+        })
+
         it("should set the pencilDurability from the pencil file if there's data there", function () {
             pencil.pencilDurability = undefined;
-            let handlerSpy = spyOn(pencil.pencilFileHandler, "readFromFile");
             let parseSpy = spyOn(pencil, "parsePencilData").and.returnValue({durability: 15});
             pencil.setDurability();
             expect(parseSpy).toHaveBeenCalledTimes(1);
-            expect(handlerSpy).toHaveBeenCalledTimes(1);
+            expect(pencilHandlerSpy).toHaveBeenCalledTimes(1);
             expect(pencil.pencilDurability).toEqual(15);
         });
 
@@ -47,6 +50,56 @@ describe("Pencil", function () {
             pencil.setDurability();
             expect(spy).toHaveBeenCalled();
             expect(pencil.pencilDurability).toEqual(undefined);
+        });
+
+        it("should set the initial durability from the pencil file if there's data there", function () {
+            pencil.initialPencilDurability = undefined;
+            let parseSpy = spyOn(pencil, "parsePencilData").and.returnValue({initialDurability: 15});
+            pencil.setDurability();
+            expect(parseSpy).toHaveBeenCalledTimes(1);
+            expect(pencilHandlerSpy).toHaveBeenCalledTimes(1);
+            expect(pencil.initialPencilDurability).toEqual(15);
+        });
+
+        it("should leave the initial durability undefined if the pencil file is empty", function () {
+            pencil.initialPencilDurability = undefined;
+            let spy = spyOn(pencil, "parsePencilData").and.returnValue({});
+            pencil.setDurability();
+            expect(spy).toHaveBeenCalled();
+            expect(pencil.initialPencilDurability).toEqual(undefined);
+        });
+
+        it("should leave the initial durability undefined if the pencil file does not contain a value", function () {
+            pencil.initialPencilDurability = undefined;
+            let spy = spyOn(pencil, "parsePencilData").and.returnValue({initialDurability: undefined});
+            pencil.setDurability();
+            expect(spy).toHaveBeenCalled();
+            expect(pencil.initialPencilDurability).toEqual(undefined);
+        });
+
+        it("should set the eraser durability from the pencil file if there's data there", function () {
+            pencil.eraserDurability = undefined;
+            let parseSpy = spyOn(pencil, "parsePencilData").and.returnValue({eraserDurability: 15});
+            pencil.setDurability();
+            expect(parseSpy).toHaveBeenCalledTimes(1);
+            expect(pencilHandlerSpy).toHaveBeenCalledTimes(1);
+            expect(pencil.eraserDurability).toEqual(15);
+        });
+
+        it("should leave the eraser durability undefined if the pencil file is empty", function () {
+            pencil.eraserDurability = undefined;
+            let spy = spyOn(pencil, "parsePencilData").and.returnValue({});
+            pencil.setDurability();
+            expect(spy).toHaveBeenCalled();
+            expect(pencil.eraserDurability).toEqual(undefined);
+        });
+
+        it("should leave the eraser durability undefined if the pencil file does not contain a value", function () {
+            pencil.eraserDurability = undefined;
+            let spy = spyOn(pencil, "parsePencilData").and.returnValue({eraserDurability: undefined});
+            pencil.setDurability();
+            expect(spy).toHaveBeenCalled();
+            expect(pencil.eraserDurability).toEqual(undefined);
         });
     });
 
@@ -83,6 +136,7 @@ describe("Pencil", function () {
             paperHandlerWriteSpy = spyOn(pencil.paperFileHandler, "writeToFileFromScratch");
             pencilHandlerSpy = spyOn(pencil.pencilFileHandler, "storePencilState");
             pencil.eraserDurability = 5;
+            durabilitySpy = spyOn(pencil, "setDurability");
         });
 
         it("should erase the last instance of specified text from a string", function () {

@@ -37,8 +37,9 @@ class Pencil {
     }
 
     erase(textToErase) {
+        this.setDurability();
         let currentText = this.paperFileHandler.readFromFile();
-        let startIndex = currentText.lastIndexOf(textToErase.trim());
+        let startIndex = currentText.lastIndexOf(textToErase);
         let endIndex = startIndex + textToErase.length;
 
         if (startIndex < 0) {
@@ -47,18 +48,24 @@ class Pencil {
 
         let newText = currentText.substring(endIndex);
         let currentIndex = endIndex;
+
         for (let i = endIndex; i > startIndex; i--) {
-            if (this.eraserDurability > 0) {
+            if (this.eraserDurability > 0 || this.eraserDurability == undefined) {
                 newText = ' ' + newText;
                 currentIndex = i - 1;
-                this.eraserDurability--;
+                if (this.eraserDurability != undefined) {
+                    this.eraserDurability--;
+                }
             }
         }
+
         newText = currentText.substring(0, currentIndex) + newText;
+
         this.paperFileHandler.writeToFileFromScratch(newText);
     }
 
     edit(textToAdd) {
+        this.setDurability();
         let currentText = this.paperFileHandler.readFromFile();
         let startIndex = currentText.lastIndexOf('  ') + 1;
 
@@ -96,6 +103,10 @@ class Pencil {
 
         if (pencilData.initialDurability !== undefined && pencilData.durability !== "") {
             this.initialPencilDurability = pencilData.initialDurability;
+        }
+
+        if (pencilData.eraserDurability !== undefined && pencilData.eraserDurability !== "") {
+            this.eraserDurability = pencilData.eraserDurability;
         }
     }
 
